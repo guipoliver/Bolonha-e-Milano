@@ -5,12 +5,14 @@ actor Jogador
 rectangle "Bolonha e Milano" {
   usecase "Iniciar novo jogo" as UC1
   usecase "Ver status da cidade" as UC2
-  usecase "Ver informações sobre o jogo" as UC3
-  usecase "Sair do jogo" as UC4
+  usecase "Acessar mercado" as UC3
+  usecase "Ver informações sobre o jogo" as UC4
+  usecase "Sair do jogo" as UC5
 }
 
 Jogador --> UC1
 Jogador --> UC2
 Jogador --> UC3
 Jogador --> UC4
+Jogador --> UC5
 @enduml

@@ -19,7 +19,7 @@ Requisitos: Python 3.10+
 
 - [x] 1. Estrutura inicial, Main e menu
 - [x] 2. Classes Jogador e Cidade
-- [ ] 3. Economia: florins, terras e grãos
+- [x] 3. Economia: florins, terras e grãos
 - [ ] 4. Agricultura e população
 - [ ] 5. Impostos e governo
 - [ ] 6. Construções e soldados

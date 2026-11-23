@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+actor Jogador
+
+rectangle "Bolonha e Milano" {
+  usecase "Acessar mercado" as UC3
+  usecase "Comprar grãos" as UC31
+  usecase "Vender grãos" as UC32
+  usecase "Comprar terras" as UC33
+  usecase "Vender terras" as UC34
+}
+
+Jogador --> UC3
+UC31 .> UC3 : <<extend>>
+UC32 .> UC3 : <<extend>>
+UC33 .> UC3 : <<extend>>
+UC34 .> UC3 : <<extend>>
+@enduml

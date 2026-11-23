@@ -10,3 +10,6 @@ class Jogador:
 
     def get_titulo(self):
         return self._titulo
+
+    def set_titulo(self, titulo):
+        self._titulo = titulo

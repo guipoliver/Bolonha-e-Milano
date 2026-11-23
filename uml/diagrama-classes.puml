@@ -9,11 +9,19 @@ class Menu {
   - em_execucao: bool
   - jogador: Jogador
   - cidade: Cidade
+  - mercado: Mercado
   + executar(): void
-  - iniciar_novo_jogo(): void
   - exibir_opcoes(): void
   - ler_opcao(): int
   - processar_opcao(opcao: int): void
+  - iniciar_novo_jogo(): void
+  - exibir_status(): void
+  - abrir_mercado(): void
+  - ler_quantidade(): int
+  - comprar_graos(): void
+  - vender_graos(): void
+  - comprar_terras(): void
+  - vender_terras(): void
   - exibir_sobre(): void
 }
 
@@ -22,18 +30,40 @@ class Jogador {
   - titulo: str
   + get_nome(): str
   + get_titulo(): str
+  + set_titulo(titulo): void
 }
 
 class Cidade {
   - nome: str
   - ano_atual: int
   - dono: Jogador
+  - florins: int
+  - terras: int
+  - graos: int
+  + get_nome() / get_ano_atual() / get_dono()
+  + get_florins() / get_terras() / get_graos()
   + avancar_ano(): void
+  + adicionar_florins(qtd) / remover_florins(qtd)
+  + adicionar_terras(qtd) / remover_terras(qtd)
+  + adicionar_graos(qtd) / remover_graos(qtd)
   + exibir_status(): void
+}
+
+class Mercado {
+  - PRECO_GRAO: int
+  - PRECO_TERRA: int
+  + get_preco_grao(): int
+  + get_preco_terra(): int
+  + comprar_graos(c, qtd): bool
+  + vender_graos(c, qtd): bool
+  + comprar_terras(c, qtd): bool
+  + vender_terras(c, qtd): bool
 }
 
 Main ..> Menu : cria e usa
 Menu --> Jogador : jogador
 Menu --> Cidade : cidade
+Menu --> Mercado : mercado
 Cidade --> Jogador : dono
+Mercado ..> Cidade : usa
 @enduml

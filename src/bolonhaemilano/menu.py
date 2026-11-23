@@ -1,5 +1,6 @@
 from .cidade import Cidade
 from .jogador import Jogador
+from .mercado import Mercado
 
 
 class Menu:
@@ -9,6 +10,7 @@ class Menu:
         self._em_execucao = True
         self._jogador = None  # ainda nao existe jogo iniciado
         self._cidade = None
+        self._mercado = Mercado()
 
     def executar(self):
         """Laco principal: repete exibir -> ler -> processar ate o jogador sair."""
@@ -17,15 +19,6 @@ class Menu:
             opcao = self._ler_opcao()
             self._processar_opcao(opcao)
         print("\nAte a proxima, nobre mercador!")
-
-    def _iniciar_novo_jogo(self):
-        """Cria um Jogador e uma Cidade de verdade, perguntando os nomes."""
-        nome_jogador = input("Digite o nome do jogador: ").strip()
-        nome_cidade = input("Digite o nome da cidade: ").strip()
-
-        self._jogador = Jogador(nome_jogador)
-        self._cidade = Cidade(nome_cidade, self._jogador)
-        self._cidade.exibir_status()
 
     def _exibir_opcoes(self):
         """So imprime o menu. Nao le nada do teclado."""
@@ -36,7 +29,8 @@ class Menu:
         print("=" * 42)
         print("1 - Novo jogo")
         print("2 - Ver status da cidade")
-        print("3 - Sobre o jogo")
+        print("3 - Mercado")
+        print("4 - Sobre o jogo")
         print("0 - Sair")
 
     def _ler_opcao(self):
@@ -53,19 +47,116 @@ class Menu:
         if opcao == 1:
             self._iniciar_novo_jogo()
         elif opcao == 2:
-            if self._cidade is None:
-                print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
-            else:
-                self._cidade.exibir_status()
+            self._exibir_status()
         elif opcao == 3:
+            self._abrir_mercado()
+        elif opcao == 4:
             self._exibir_sobre()
         elif opcao == 0:
             self._em_execucao = False
         else:
-            print("\nOpcao invalida! Digite 1, 2, 3 ou 0.")
+            print("\nOpcao invalida! Digite 1, 2, 3, 4 ou 0.")
 
+    def _iniciar_novo_jogo(self):
+        """Cria um Jogador e uma Cidade de verdade, perguntando os nomes."""
+        nome_jogador = input("Digite o nome do jogador: ").strip()
+        nome_cidade = input("Digite o nome da cidade: ").strip()
+
+        self._jogador = Jogador(nome_jogador)
+        self._cidade = Cidade(nome_cidade, self._jogador)
+        self._cidade.exibir_status()
+
+    def _exibir_status(self):
+        """Mostra o status da cidade, ou avisa se nao ha jogo iniciado."""
+        if self._cidade is None:
+            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+        else:
+            self._cidade.exibir_status()
+
+    # ------------------------------------------------------------------
+    # Mercado
+    # ------------------------------------------------------------------
+    def _abrir_mercado(self):
+        """Submenu do mercado: laco que so termina com a opcao 0."""
+        if self._cidade is None:
+            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+            return
+
+        no_mercado = True
+        while no_mercado:
+            print()
+            print("--- MERCADO ---")
+            print(f"Preco do grao: {self._mercado.get_preco_grao()} florins por unidade")
+            print(f"Preco da terra: {self._mercado.get_preco_terra()} florins por hectare")
+            print(f"Seus recursos -> Florins: {self._cidade.get_florins()} | "
+                  f"Graos: {self._cidade.get_graos()} | "
+                  f"Terras: {self._cidade.get_terras()}")
+            print("1 - Comprar graos")
+            print("2 - Vender graos")
+            print("3 - Comprar terras")
+            print("4 - Vender terras")
+            print("0 - Voltar")
+
+            opcao = self._ler_opcao()
+            if opcao == 1:
+                self._comprar_graos()
+            elif opcao == 2:
+                self._vender_graos()
+            elif opcao == 3:
+                self._comprar_terras()
+            elif opcao == 4:
+                self._vender_terras()
+            elif opcao == 0:
+                no_mercado = False
+            else:
+                print("\nOpcao invalida! Digite 1, 2, 3, 4 ou 0.")
+
+    def _ler_quantidade(self):
+        """Le e valida a quantidade. Entrada invalida devolve -1."""
+        try:
+            return int(input("Quantidade: ").strip())
+        except (ValueError, EOFError):
+            return -1
+
+    def _comprar_graos(self):
+        quantidade = self._ler_quantidade()
+        if quantidade <= 0:
+            print("\nQuantidade invalida! Digite um numero maior que zero.")
+        elif self._mercado.comprar_graos(self._cidade, quantidade):
+            print(f"\nCompra realizada: {quantidade} graos.")
+        else:
+            print("\nFlorins insuficientes para essa compra.")
+
+    def _vender_graos(self):
+        quantidade = self._ler_quantidade()
+        if quantidade <= 0:
+            print("\nQuantidade invalida! Digite um numero maior que zero.")
+        elif self._mercado.vender_graos(self._cidade, quantidade):
+            print(f"\nVenda realizada: {quantidade} graos.")
+        else:
+            print("\nGraos insuficientes para essa venda.")
+
+    def _comprar_terras(self):
+        quantidade = self._ler_quantidade()
+        if quantidade <= 0:
+            print("\nQuantidade invalida! Digite um numero maior que zero.")
+        elif self._mercado.comprar_terras(self._cidade, quantidade):
+            print(f"\nCompra realizada: {quantidade} hectares.")
+        else:
+            print("\nFlorins insuficientes para essa compra.")
+
+    def _vender_terras(self):
+        quantidade = self._ler_quantidade()
+        if quantidade <= 0:
+            print("\nQuantidade invalida! Digite um numero maior que zero.")
+        elif self._mercado.vender_terras(self._cidade, quantidade):
+            print(f"\nVenda realizada: {quantidade} hectares.")
+        else:
+            print("\nTerras insuficientes para essa venda.")
+
+    # ------------------------------------------------------------------
     def _exibir_sobre(self):
-        """Imprime o texto que explica o jogo (so para a opcao 3)."""
+        """Imprime o texto que explica o jogo (so para a opcao 4)."""
         print()
         print("--- SOBRE O JOGO ---")
         print("Bolonha e Milano e um jogo de estrategia economica medieval.")
