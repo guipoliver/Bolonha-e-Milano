@@ -10,18 +10,18 @@ class Menu {
   - jogador: Jogador
   - cidade: Cidade
   - mercado: Mercado
+  - agricultura: Agricultura
   + executar(): void
   - exibir_opcoes(): void
   - ler_opcao(): int
   - processar_opcao(opcao: int): void
   - iniciar_novo_jogo(): void
   - exibir_status(): void
-  - abrir_mercado(): void
+  - abrir_mercado() + 4 operações (Etapa 3)
   - ler_quantidade(): int
-  - comprar_graos(): void
-  - vender_graos(): void
-  - comprar_terras(): void
-  - vender_terras(): void
+  - abrir_agricultura(): void
+  - colher(): void
+  - distribuir_alimentos(): void
   - exibir_sobre(): void
 }
 
@@ -40,12 +40,14 @@ class Cidade {
   - florins: int
   - terras: int
   - graos: int
+  - servos: int
   + get_nome() / get_ano_atual() / get_dono()
-  + get_florins() / get_terras() / get_graos()
+  + get_florins() / get_terras() / get_graos() / get_servos()
   + avancar_ano(): void
   + adicionar_florins(qtd) / remover_florins(qtd)
   + adicionar_terras(qtd) / remover_terras(qtd)
   + adicionar_graos(qtd) / remover_graos(qtd)
+  + adicionar_servos(qtd) / remover_servos(qtd)
   + exibir_status(): void
 }
 
@@ -60,10 +62,23 @@ class Mercado {
   + vender_terras(c, qtd): bool
 }
 
+class Agricultura {
+  - HECTARES_POR_SERVO: int
+  - RENDIMENTO_POR_HECTARE: int
+  - SERVOS_POR_GRAO: int
+  - CRESCIMENTO_PERCENTUAL: int
+  - PERCENTUAL_MINIMO: int
+  - PERCENTUAL_MAXIMO: int
+  + processar_colheita(cidade): int
+  + distribuir_alimentos(cidade, %): bool
+}
+
 Main ..> Menu : cria e usa
 Menu --> Jogador : jogador
 Menu --> Cidade : cidade
 Menu --> Mercado : mercado
+Menu --> Agricultura : agricultura
 Cidade --> Jogador : dono
 Mercado ..> Cidade : usa
+Agricultura ..> Cidade : usa
 @enduml

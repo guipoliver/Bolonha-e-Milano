@@ -8,6 +8,7 @@ class Cidade:
         self._florins = 1000
         self._terras = 10000  # hectares
         self._graos = 500     # unidades
+        self._servos = 200    # populacao
 
     # --- getters ---
     def get_nome(self):
@@ -27,6 +28,9 @@ class Cidade:
 
     def get_graos(self):
         return self._graos
+
+    def get_servos(self):
+        return self._servos
 
     # --- tempo ---
     def avancar_ano(self):
@@ -66,9 +70,20 @@ class Cidade:
         self._graos -= quantidade
         return True
 
+    # --- servos ---
+    def adicionar_servos(self, quantidade):
+        self._servos += quantidade
+
+    def remover_servos(self, quantidade):
+        """Remove servos. Devolve False (sem alterar nada) se nao houver servos."""
+        if quantidade < 0 or quantidade > self._servos:
+            return False
+        self._servos -= quantidade
+        return True
+
     # --- status ---
     def exibir_status(self):
-        """Imprime nome, governante, ano e os tres recursos."""
+        """Imprime nome, governante, ano e os quatro recursos."""
         print()
         print("--- STATUS DA CIDADE ---")
         print(f"Cidade: {self._nome}")
@@ -77,3 +92,4 @@ class Cidade:
         print(f"Florins: {self._florins}")
         print(f"Terras: {self._terras} hectares")
         print(f"Graos: {self._graos} unidades")
+        print(f"Servos: {self._servos}")

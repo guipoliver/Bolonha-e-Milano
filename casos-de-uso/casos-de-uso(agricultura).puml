@@ -1,0 +1,14 @@
+@startuml
+left to right direction
+actor Jogador
+
+rectangle "Bolonha e Milano" {
+  usecase "Acessar agricultura" as UC4
+  usecase "Colher (processar safra)" as UC41
+  usecase "Distribuir alimentos" as UC42
+}
+
+Jogador --> UC4
+UC41 .> UC4 : <<extend>>
+UC42 .> UC4 : <<extend>>
+@enduml

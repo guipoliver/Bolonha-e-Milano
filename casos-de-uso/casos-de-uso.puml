@@ -6,8 +6,9 @@ rectangle "Bolonha e Milano" {
   usecase "Iniciar novo jogo" as UC1
   usecase "Ver status da cidade" as UC2
   usecase "Acessar mercado" as UC3
-  usecase "Ver informações sobre o jogo" as UC4
-  usecase "Sair do jogo" as UC5
+  usecase "Acessar agricultura" as UC4
+  usecase "Ver informações sobre o jogo" as UC5
+  usecase "Sair do jogo" as UC6
 }
 
 Jogador --> UC1
@@ -15,4 +16,5 @@ Jogador --> UC2
 Jogador --> UC3
 Jogador --> UC4
 Jogador --> UC5
+Jogador --> UC6
 @enduml

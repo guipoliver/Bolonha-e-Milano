@@ -1,3 +1,4 @@
+from .agricultura import Agricultura
 from .cidade import Cidade
 from .jogador import Jogador
 from .mercado import Mercado
@@ -11,6 +12,7 @@ class Menu:
         self._jogador = None  # ainda nao existe jogo iniciado
         self._cidade = None
         self._mercado = Mercado()
+        self._agricultura = Agricultura()
 
     def executar(self):
         """Laco principal: repete exibir -> ler -> processar ate o jogador sair."""
@@ -30,7 +32,8 @@ class Menu:
         print("1 - Novo jogo")
         print("2 - Ver status da cidade")
         print("3 - Mercado")
-        print("4 - Sobre o jogo")
+        print("4 - Agricultura")
+        print("5 - Sobre o jogo")
         print("0 - Sair")
 
     def _ler_opcao(self):
@@ -51,11 +54,13 @@ class Menu:
         elif opcao == 3:
             self._abrir_mercado()
         elif opcao == 4:
+            self._abrir_agricultura()
+        elif opcao == 5:
             self._exibir_sobre()
         elif opcao == 0:
             self._em_execucao = False
         else:
-            print("\nOpcao invalida! Digite 1, 2, 3, 4 ou 0.")
+            print("\nOpcao invalida! Digite 1, 2, 3, 4, 5 ou 0.")
 
     def _iniciar_novo_jogo(self):
         """Cria um Jogador e uma Cidade de verdade, perguntando os nomes."""
@@ -74,7 +79,7 @@ class Menu:
             self._cidade.exibir_status()
 
     # ------------------------------------------------------------------
-    # Mercado
+    # Mercado (Etapa 3)
     # ------------------------------------------------------------------
     def _abrir_mercado(self):
         """Submenu do mercado: laco que so termina com a opcao 0."""
@@ -111,10 +116,10 @@ class Menu:
             else:
                 print("\nOpcao invalida! Digite 1, 2, 3, 4 ou 0.")
 
-    def _ler_quantidade(self):
-        """Le e valida a quantidade. Entrada invalida devolve -1."""
+    def _ler_quantidade(self, mensagem="Quantidade: "):
+        """Le e valida um numero inteiro. Entrada invalida devolve -1."""
         try:
-            return int(input("Quantidade: ").strip())
+            return int(input(mensagem).strip())
         except (ValueError, EOFError):
             return -1
 
@@ -155,8 +160,71 @@ class Menu:
             print("\nTerras insuficientes para essa venda.")
 
     # ------------------------------------------------------------------
+    # Agricultura (Etapa 4)
+    # ------------------------------------------------------------------
+    def _abrir_agricultura(self):
+        """Submenu da agricultura: laco que so termina com a opcao 0."""
+        if self._cidade is None:
+            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+            return
+
+        na_agricultura = True
+        while na_agricultura:
+            print()
+            print("--- AGRICULTURA ---")
+            print(f"Terras: {self._cidade.get_terras()} hectares | "
+                  f"Servos: {self._cidade.get_servos()} | "
+                  f"Graos: {self._cidade.get_graos()}")
+            print("1 - Colher (processar safra)")
+            print("2 - Distribuir alimentos")
+            print("0 - Voltar")
+
+            opcao = self._ler_opcao()
+            if opcao == 1:
+                self._colher()
+            elif opcao == 2:
+                self._distribuir_alimentos()
+            elif opcao == 0:
+                na_agricultura = False
+            else:
+                print("\nOpcao invalida! Digite 1, 2 ou 0.")
+
+    def _colher(self):
+        """Delega a colheita para Agricultura e imprime o resultado."""
+        graos_antes = self._cidade.get_graos()
+        hectares = self._agricultura.processar_colheita(self._cidade)
+        if hectares == 0:
+            print("\nNao foi possivel cultivar: faltam terras, servos ou graos para semear.")
+        else:
+            graos_depois = self._cidade.get_graos()
+            print(f"\nColheita realizada! Hectares cultivados: {hectares}")
+            print(f"Graos: {graos_antes} -> {graos_depois} ({graos_depois - graos_antes:+d})")
+
+    def _distribuir_alimentos(self):
+        """Delega a distribuicao para Agricultura e imprime o resultado."""
+        percentual = self._ler_quantidade("Percentual de graos a distribuir (20 a 80): ")
+        graos_antes = self._cidade.get_graos()
+        servos_antes = self._cidade.get_servos()
+
+        if not self._agricultura.distribuir_alimentos(self._cidade, percentual):
+            print("\nPercentual invalido! Digite um valor entre 20 e 80.")
+            return
+
+        distribuido = graos_antes - self._cidade.get_graos()
+        servos_agora = self._cidade.get_servos()
+        variacao = servos_agora - servos_antes
+
+        print(f"\nForam distribuidos {distribuido} graos a populacao.")
+        if variacao > 0:
+            print(f"A populacao cresceu: +{variacao} servos (agora {servos_agora}).")
+        elif variacao < 0:
+            print(f"Faltou comida! A populacao diminuiu: {variacao} servos (agora {servos_agora}).")
+        else:
+            print("A populacao ficou estavel.")
+
+    # ------------------------------------------------------------------
     def _exibir_sobre(self):
-        """Imprime o texto que explica o jogo (so para a opcao 4)."""
+        """Imprime o texto que explica o jogo (so para a opcao 5)."""
         print()
         print("--- SOBRE O JOGO ---")
         print("Bolonha e Milano e um jogo de estrategia economica medieval.")
