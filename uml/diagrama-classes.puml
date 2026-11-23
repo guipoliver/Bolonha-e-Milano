@@ -1,0 +1,39 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Main {
+  + main(): void
+}
+
+class Menu {
+  - em_execucao: bool
+  - jogador: Jogador
+  - cidade: Cidade
+  + executar(): void
+  - iniciar_novo_jogo(): void
+  - exibir_opcoes(): void
+  - ler_opcao(): int
+  - processar_opcao(opcao: int): void
+  - exibir_sobre(): void
+}
+
+class Jogador {
+  - nome: str
+  - titulo: str
+  + get_nome(): str
+  + get_titulo(): str
+}
+
+class Cidade {
+  - nome: str
+  - ano_atual: int
+  - dono: Jogador
+  + avancar_ano(): void
+  + exibir_status(): void
+}
+
+Main ..> Menu : cria e usa
+Menu --> Jogador : jogador
+Menu --> Cidade : cidade
+Cidade --> Jogador : dono
+@enduml

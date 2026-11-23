@@ -18,7 +18,7 @@ Requisitos: Python 3.10+
 ## Etapas
 
 - [x] 1. Estrutura inicial, Main e menu
-- [ ] 2. Classes Jogador e Cidade
+- [x] 2. Classes Jogador e Cidade
 - [ ] 3. Economia: florins, terras e grãos
 - [ ] 4. Agricultura e população
 - [ ] 5. Impostos e governo
