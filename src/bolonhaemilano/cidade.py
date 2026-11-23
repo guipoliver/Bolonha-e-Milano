@@ -9,6 +9,8 @@ class Cidade:
         self._terras = 10000  # hectares
         self._graos = 500     # unidades
         self._servos = 200    # populacao
+        self._taxa_imposto = 10          # configuracao (%), nao e recurso
+        self._nivel_justica = "Moderada"  # configuracao, nao e recurso
 
     # --- getters ---
     def get_nome(self):
@@ -31,6 +33,19 @@ class Cidade:
 
     def get_servos(self):
         return self._servos
+
+    def get_taxa_imposto(self):
+        return self._taxa_imposto
+
+    def get_nivel_justica(self):
+        return self._nivel_justica
+
+    # --- configuracoes de governo (getter/setter simples) ---
+    def set_taxa_imposto(self, taxa):
+        self._taxa_imposto = taxa
+
+    def set_nivel_justica(self, nivel):
+        self._nivel_justica = nivel
 
     # --- tempo ---
     def avancar_ano(self):
@@ -83,7 +98,7 @@ class Cidade:
 
     # --- status ---
     def exibir_status(self):
-        """Imprime nome, governante, ano e os quatro recursos."""
+        """Imprime nome, governante, ano, os quatro recursos, taxa e justica."""
         print()
         print("--- STATUS DA CIDADE ---")
         print(f"Cidade: {self._nome}")
@@ -93,3 +108,5 @@ class Cidade:
         print(f"Terras: {self._terras} hectares")
         print(f"Graos: {self._graos} unidades")
         print(f"Servos: {self._servos}")
+        print(f"Taxa de imposto: {self._taxa_imposto}%")
+        print(f"Nivel de justica: {self._nivel_justica}")

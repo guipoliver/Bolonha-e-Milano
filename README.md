@@ -21,7 +21,7 @@ Requisitos: Python 3.10+
 - [x] 2. Classes Jogador e Cidade
 - [x] 3. Economia: florins, terras e grãos
 - [x] 4. Agricultura e população
-- [ ] 5. Impostos e governo
+- [x] 5. Impostos e governo
 - [ ] 6. Construções e soldados
 - [ ] 7. Rodadas, múltiplos jogadores e vitória
 - [ ] 8. Integração, testes e entrega final

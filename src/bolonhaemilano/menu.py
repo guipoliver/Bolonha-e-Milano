@@ -1,5 +1,6 @@
 from .agricultura import Agricultura
 from .cidade import Cidade
+from .governo import Governo
 from .jogador import Jogador
 from .mercado import Mercado
 
@@ -13,6 +14,7 @@ class Menu:
         self._cidade = None
         self._mercado = Mercado()
         self._agricultura = Agricultura()
+        self._governo = Governo()
 
     def executar(self):
         """Laco principal: repete exibir -> ler -> processar ate o jogador sair."""
@@ -33,7 +35,8 @@ class Menu:
         print("2 - Ver status da cidade")
         print("3 - Mercado")
         print("4 - Agricultura")
-        print("5 - Sobre o jogo")
+        print("5 - Governo")
+        print("6 - Sobre o jogo")
         print("0 - Sair")
 
     def _ler_opcao(self):
@@ -56,11 +59,13 @@ class Menu:
         elif opcao == 4:
             self._abrir_agricultura()
         elif opcao == 5:
+            self._abrir_governo()
+        elif opcao == 6:
             self._exibir_sobre()
         elif opcao == 0:
             self._em_execucao = False
         else:
-            print("\nOpcao invalida! Digite 1, 2, 3, 4, 5 ou 0.")
+            print("\nOpcao invalida! Digite 1, 2, 3, 4, 5, 6 ou 0.")
 
     def _iniciar_novo_jogo(self):
         """Cria um Jogador e uma Cidade de verdade, perguntando os nomes."""
@@ -223,8 +228,66 @@ class Menu:
             print("A populacao ficou estavel.")
 
     # ------------------------------------------------------------------
+    # Governo (Etapa 5)
+    # ------------------------------------------------------------------
+    def _abrir_governo(self):
+        """Submenu do governo: laco que so termina com a opcao 0."""
+        if self._cidade is None:
+            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+            return
+
+        no_governo = True
+        while no_governo:
+            print()
+            print("--- GOVERNO ---")
+            print(f"Florins: {self._cidade.get_florins()} | "
+                  f"Taxa de imposto: {self._cidade.get_taxa_imposto()}% | "
+                  f"Justica: {self._cidade.get_nivel_justica()}")
+            print("1 - Arrecadar impostos")
+            print("2 - Definir taxa de imposto")
+            print("3 - Definir nivel de justica")
+            print("0 - Voltar")
+
+            opcao = self._ler_opcao()
+            if opcao == 1:
+                self._arrecadar_impostos()
+            elif opcao == 2:
+                self._definir_taxa_imposto()
+            elif opcao == 3:
+                self._definir_justica()
+            elif opcao == 0:
+                no_governo = False
+            else:
+                print("\nOpcao invalida! Digite 1, 2, 3 ou 0.")
+
+    def _arrecadar_impostos(self):
+        """Delega a arrecadacao para Governo e imprime o resultado."""
+        florins_antes = self._cidade.get_florins()
+        arrecadado = self._governo.arrecadar_impostos(self._cidade)
+        print(f"\nImpostos arrecadados: {arrecadado} florins.")
+        print(f"Florins: {florins_antes} -> {self._cidade.get_florins()}")
+
+    def _definir_taxa_imposto(self):
+        taxa = self._ler_quantidade("Nova taxa de imposto (0 a 50): ")
+        if self._governo.definir_taxa_imposto(self._cidade, taxa):
+            print(f"\nTaxa de imposto definida: {taxa}%.")
+        else:
+            print("\nTaxa invalida! Digite um valor entre 0 e 50.")
+
+    def _definir_justica(self):
+        print("\n1 - Justa (impostos x0,8)")
+        print("2 - Moderada (impostos x1,0)")
+        print("3 - Severa (impostos x1,3)")
+        escolha = self._ler_quantidade("Escolha o nivel de justica: ")
+        nivel = {1: "Justa", 2: "Moderada", 3: "Severa"}.get(escolha, "")
+        if self._governo.definir_justica(self._cidade, nivel):
+            print(f"\nNivel de justica definido: {nivel}.")
+        else:
+            print("\nNivel invalido! Escolha 1, 2 ou 3.")
+
+    # ------------------------------------------------------------------
     def _exibir_sobre(self):
-        """Imprime o texto que explica o jogo (so para a opcao 5)."""
+        """Imprime o texto que explica o jogo (so para a opcao 6)."""
         print()
         print("--- SOBRE O JOGO ---")
         print("Bolonha e Milano e um jogo de estrategia economica medieval.")

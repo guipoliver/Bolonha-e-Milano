@@ -11,17 +11,17 @@ class Menu {
   - cidade: Cidade
   - mercado: Mercado
   - agricultura: Agricultura
+  - governo: Governo
   + executar(): void
-  - exibir_opcoes(): void
-  - ler_opcao(): int
-  - processar_opcao(opcao: int): void
-  - iniciar_novo_jogo(): void
-  - exibir_status(): void
+  - exibir_opcoes() / ler_opcao() / processar_opcao()
+  - iniciar_novo_jogo() / exibir_status()
   - abrir_mercado() + 4 operações (Etapa 3)
   - ler_quantidade(): int
-  - abrir_agricultura(): void
-  - colher(): void
-  - distribuir_alimentos(): void
+  - abrir_agricultura() + 2 operações (Etapa 4)
+  - abrir_governo(): void
+  - arrecadar_impostos(): void
+  - definir_taxa_imposto(): void
+  - definir_justica(): void
   - exibir_sobre(): void
 }
 
@@ -41,8 +41,12 @@ class Cidade {
   - terras: int
   - graos: int
   - servos: int
+  - taxa_imposto: int
+  - nivel_justica: str
   + get_nome() / get_ano_atual() / get_dono()
   + get_florins() / get_terras() / get_graos() / get_servos()
+  + get_taxa_imposto() / set_taxa_imposto(taxa)
+  + get_nivel_justica() / set_nivel_justica(nivel)
   + avancar_ano(): void
   + adicionar_florins(qtd) / remover_florins(qtd)
   + adicionar_terras(qtd) / remover_terras(qtd)
@@ -73,12 +77,25 @@ class Agricultura {
   + distribuir_alimentos(cidade, %): bool
 }
 
+class Governo {
+  - TAXA_MAXIMA: int
+  - MULTIPLICADOR_JUSTA: float
+  - MULTIPLICADOR_MODERADA: float
+  - MULTIPLICADOR_SEVERA: float
+  + arrecadar_impostos(cidade): int
+  + definir_taxa_imposto(cidade, taxa): bool
+  + definir_justica(cidade, nivel): bool
+  - multiplicador_para(nivel): float
+}
+
 Main ..> Menu : cria e usa
 Menu --> Jogador : jogador
 Menu --> Cidade : cidade
 Menu --> Mercado : mercado
 Menu --> Agricultura : agricultura
+Menu --> Governo : governo
 Cidade --> Jogador : dono
 Mercado ..> Cidade : usa
 Agricultura ..> Cidade : usa
+Governo ..> Cidade : usa
 @enduml
