@@ -1,5 +1,6 @@
 from .agricultura import Agricultura
 from .cidade import Cidade
+from .construcoes import Construcoes
 from .governo import Governo
 from .jogador import Jogador
 from .mercado import Mercado
@@ -15,6 +16,7 @@ class Menu:
         self._mercado = Mercado()
         self._agricultura = Agricultura()
         self._governo = Governo()
+        self._construcoes = Construcoes()
 
     def executar(self):
         """Laco principal: repete exibir -> ler -> processar ate o jogador sair."""
@@ -36,7 +38,8 @@ class Menu:
         print("3 - Mercado")
         print("4 - Agricultura")
         print("5 - Governo")
-        print("6 - Sobre o jogo")
+        print("6 - Construcoes")
+        print("7 - Sobre o jogo")
         print("0 - Sair")
 
     def _ler_opcao(self):
@@ -61,11 +64,13 @@ class Menu:
         elif opcao == 5:
             self._abrir_governo()
         elif opcao == 6:
+            self._abrir_construcoes()
+        elif opcao == 7:
             self._exibir_sobre()
         elif opcao == 0:
             self._em_execucao = False
         else:
-            print("\nOpcao invalida! Digite 1, 2, 3, 4, 5, 6 ou 0.")
+            print("\nOpcao invalida! Digite 1, 2, 3, 4, 5, 6, 7 ou 0.")
 
     def _iniciar_novo_jogo(self):
         """Cria um Jogador e uma Cidade de verdade, perguntando os nomes."""
@@ -286,8 +291,61 @@ class Menu:
             print("\nNivel invalido! Escolha 1, 2 ou 3.")
 
     # ------------------------------------------------------------------
+    # Construcoes (Etapa 6)
+    # ------------------------------------------------------------------
+    def _abrir_construcoes(self):
+        """Submenu de construcoes: laco que so termina com a opcao 0."""
+        if self._cidade is None:
+            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+            return
+
+        na_construcoes = True
+        while na_construcoes:
+            print()
+            print("--- CONSTRUCOES ---")
+            print(f"Florins: {self._cidade.get_florins()} | "
+                  f"Servos: {self._cidade.get_servos()} | "
+                  f"Soldados: {self._cidade.get_soldados()} | "
+                  f"Construcoes: {self._cidade.get_construcoes()}")
+            print(f"Preco do soldado: {self._construcoes.get_preco_soldado()} florins + 1 servo")
+            print(f"Preco da construcao: {self._construcoes.get_preco_construcao()} florins")
+            print("1 - Recrutar soldados")
+            print("2 - Construir")
+            print("0 - Voltar")
+
+            opcao = self._ler_opcao()
+            if opcao == 1:
+                self._recrutar_soldados()
+            elif opcao == 2:
+                self._construir()
+            elif opcao == 0:
+                na_construcoes = False
+            else:
+                print("\nOpcao invalida! Digite 1, 2 ou 0.")
+
+    def _recrutar_soldados(self):
+        """Delega o recrutamento para Construcoes e imprime o resultado."""
+        quantidade = self._ler_quantidade()
+        if quantidade <= 0:
+            print("\nQuantidade invalida! Digite um numero maior que zero.")
+        elif self._construcoes.recrutar_soldados(self._cidade, quantidade):
+            print(f"\nRecrutamento realizado: {quantidade} soldados.")
+        else:
+            print("\nRecursos insuficientes: confira seus florins e servos.")
+
+    def _construir(self):
+        """Delega a construcao para Construcoes e imprime o resultado."""
+        quantidade = self._ler_quantidade()
+        if quantidade <= 0:
+            print("\nQuantidade invalida! Digite um numero maior que zero.")
+        elif self._construcoes.construir(self._cidade, quantidade):
+            print(f"\nConstrucao realizada: {quantidade} edificio(s).")
+        else:
+            print("\nFlorins insuficientes para essa construcao.")
+
+    # ------------------------------------------------------------------
     def _exibir_sobre(self):
-        """Imprime o texto que explica o jogo (so para a opcao 6)."""
+        """Imprime o texto que explica o jogo (so para a opcao 7)."""
         print()
         print("--- SOBRE O JOGO ---")
         print("Bolonha e Milano e um jogo de estrategia economica medieval.")

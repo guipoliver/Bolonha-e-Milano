@@ -11,6 +11,8 @@ class Cidade:
         self._servos = 200    # populacao
         self._taxa_imposto = 10          # configuracao (%), nao e recurso
         self._nivel_justica = "Moderada"  # configuracao, nao e recurso
+        self._soldados = 0
+        self._construcoes = 0
 
     # --- getters ---
     def get_nome(self):
@@ -39,6 +41,12 @@ class Cidade:
 
     def get_nivel_justica(self):
         return self._nivel_justica
+
+    def get_soldados(self):
+        return self._soldados
+
+    def get_construcoes(self):
+        return self._construcoes
 
     # --- configuracoes de governo (getter/setter simples) ---
     def set_taxa_imposto(self, taxa):
@@ -86,27 +94,3 @@ class Cidade:
         return True
 
     # --- servos ---
-    def adicionar_servos(self, quantidade):
-        self._servos += quantidade
-
-    def remover_servos(self, quantidade):
-        """Remove servos. Devolve False (sem alterar nada) se nao houver servos."""
-        if quantidade < 0 or quantidade > self._servos:
-            return False
-        self._servos -= quantidade
-        return True
-
-    # --- status ---
-    def exibir_status(self):
-        """Imprime nome, governante, ano, os quatro recursos, taxa e justica."""
-        print()
-        print("--- STATUS DA CIDADE ---")
-        print(f"Cidade: {self._nome}")
-        print(f"Governante: {self._dono.get_titulo()} {self._dono.get_nome()}")
-        print(f"Ano atual: {self._ano_atual}")
-        print(f"Florins: {self._florins}")
-        print(f"Terras: {self._terras} hectares")
-        print(f"Graos: {self._graos} unidades")
-        print(f"Servos: {self._servos}")
-        print(f"Taxa de imposto: {self._taxa_imposto}%")
-        print(f"Nivel de justica: {self._nivel_justica}")
