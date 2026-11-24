@@ -1,0 +1,171 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam class {
+  BackgroundColor White
+  BorderColor #232A60
+  HeaderBackgroundColor #232A60
+  HeaderFontColor White
+}
+
+class Main {
+  + main(): void
+}
+
+class Menu {
+  - em_execucao: bool
+  - partida: Partida
+  - cidade: Cidade
+  - mercado: Mercado
+  - agricultura: Agricultura
+  - governo: Governo
+  - construcoes: Construcoes
+  - nobreza: Nobreza
+  + executar(): void
+  - exibir_opcoes() / ler_opcao() / processar_opcao()
+  - iniciar_novo_jogo() / exibir_status()
+  - abrir_mercado() + 4 operacoes (Etapa 3)
+  - abrir_agricultura() + 2 operacoes (Etapa 4)
+  - abrir_governo() + 3 operacoes (Etapa 5)
+  - abrir_construcoes(): void
+  - recrutar_soldados(): void
+  - construir(): void
+  - encerrar_turno(): void
+  - exibir_classificacao(): void
+  - encerrar_partida(): void
+  - exibir_sobre(): void
+}
+
+class Jogador {
+  - nome: str
+  - TITULOS: tuple
+  - nivel_titulo: int
+  + get_nome(): str
+  + get_titulo(): str
+  + get_nivel_titulo(): int
+  + promover(): bool
+  + eh_monarca(): bool
+}
+
+class Cidade {
+  - nome: str
+  - ano_atual: int
+  - dono: Jogador
+  - florins: int
+  - terras: int
+  - graos: int
+  - servos: int
+  - taxa_imposto: int
+  - nivel_justica: str
+  - soldados: int
+  - construcoes: int
+  - colheita_feita: bool
+  - impostos_arrecadados: bool
+  + get_nome() / get_ano_atual() / get_dono()
+  + get_florins() / get_terras() / get_graos() / get_servos()
+  + get_taxa_imposto() / set_taxa_imposto(taxa)
+  + get_nivel_justica() / set_nivel_justica(nivel)
+  + get_soldados() / get_construcoes()
+  + avancar_ano(): void
+  + is_colheita_feita(): bool
+  + marcar_colheita_feita(): void
+  + is_impostos_arrecadados(): bool
+  + marcar_impostos_arrecadados(): void
+  + adicionar_florins(qtd) / remover_florins(qtd)
+  + adicionar_terras(qtd) / remover_terras(qtd)
+  + adicionar_graos(qtd) / remover_graos(qtd)
+  + adicionar_servos(qtd) / remover_servos(qtd)
+  + adicionar_soldados(qtd) / remover_soldados(qtd)
+  + adicionar_construcoes(qtd) / remover_construcoes(qtd)
+  + exibir_status(): void
+}
+
+class Mercado {
+  - PRECO_GRAO: int
+  - PRECO_TERRA: int
+  + get_preco_grao(): int
+  + get_preco_terra(): int
+  + comprar_graos(c, qtd): bool
+  + vender_graos(c, qtd): bool
+  + comprar_terras(c, qtd): bool
+  + vender_terras(c, qtd): bool
+}
+
+class Agricultura {
+  - HECTARES_POR_SERVO: int
+  - RENDIMENTO_POR_HECTARE: int
+  - SERVOS_POR_GRAO: int
+  - CRESCIMENTO_PERCENTUAL: int
+  - PERCENTUAL_MINIMO: int
+  - PERCENTUAL_MAXIMO: int
+  + processar_colheita(cidade): int
+  + distribuir_alimentos(cidade, percentual): bool
+}
+
+class Governo {
+  - TAXA_MAXIMA: int
+  - MULTIPLICADOR_JUSTA: float
+  - MULTIPLICADOR_MODERADA: float
+  - MULTIPLICADOR_SEVERA: float
+  + arrecadar_impostos(cidade): int
+  + definir_taxa_imposto(cidade, taxa): bool
+  + definir_justica(cidade, nivel): bool
+  - multiplicador_para(nivel): float
+}
+
+class Construcoes {
+  - PRECO_SOLDADO: int
+  - SERVOS_POR_SOLDADO: int
+  - PRECO_CONSTRUCAO: int
+  + recrutar_soldados(cidade, qtd): bool
+  + construir(cidade, qtd): bool
+  + get_preco_soldado(): int
+  + get_preco_construcao(): int
+}
+
+class Partida #White;line:#E59B38 {
+  + MAXIMO_JOGADORES: int
+  - ANO_FINAL: int
+  - cidades: list
+  - indice_atual: int
+  + adicionar_cidade(cidade): bool
+  + get_cidades(): list
+  + get_cidade_atual(): Cidade
+  + get_ano_atual(): int
+  + get_ano_final(): int
+  + passar_turno(): bool
+  + encerrar_ano(nobreza): list
+  + terminou(): bool
+  + determinar_vencedor(nobreza): Cidade
+}
+
+class Nobreza #White;line:#E59B38 {
+  - PESO_CONSTRUCAO: int
+  - PESO_SOLDADO: int
+  - PESO_SERVO: int
+  - HECTARES_POR_PONTO: int
+  - PRESTIGIO_MINIMO: tuple
+  + calcular_prestigio(cidade): int
+  + prestigio_para_proximo_titulo(jogador): int
+  + verificar_promocao(cidade): bool
+}
+
+Main ..> Menu : cria e executa
+Menu --> Partida : partida
+Menu --> Nobreza : nobreza
+Partida --> "1..4" Cidade : cidades
+Partida ..> Nobreza : usa
+Nobreza ..> Cidade : usa
+Nobreza ..> Jogador : usa
+Menu --> Cidade : cidade
+Menu --> Mercado : mercado
+Menu --> Agricultura : agricultura
+Menu --> Governo : governo
+Menu --> Construcoes : construcoes
+Cidade --> Jogador : dono
+Mercado ..> Cidade : usa
+Agricultura ..> Cidade : usa
+Governo ..> Cidade : usa
+Construcoes ..> Cidade : usa
+
+@enduml

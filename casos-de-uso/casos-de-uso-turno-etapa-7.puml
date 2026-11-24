@@ -1,0 +1,14 @@
+@startuml
+left to right direction
+actor Jogador
+rectangle "Bolonha e Milano" {
+  usecase "Encerrar turno" as U0
+  usecase "Fechar o ano (promover títulos)" as U1
+  usecase "Declarar vencedor" as U2
+  usecase "Ver classificação" as U3
+}
+Jogador --> U0
+Jogador --> U3
+U1 .> U0 : <<extend>>
+U2 .> U1 : <<extend>>
+@enduml

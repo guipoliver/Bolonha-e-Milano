@@ -13,6 +13,8 @@ class Agricultura:
 
     def processar_colheita(self, cidade):
         """Planta, gasta sementes e produz graos novos. Devolve os hectares cultivados."""
+        if cidade.is_colheita_feita():
+            return -1
         hectares = min(cidade.get_terras(), cidade.get_servos() * self._HECTARES_POR_SERVO)
         sementes = hectares // 2  # cada 2 hectares pedem 1 grao de semente
 
@@ -24,6 +26,7 @@ class Agricultura:
         cidade.remover_graos(sementes)
         producao = hectares * self._RENDIMENTO_POR_HECTARE
         cidade.adicionar_graos(producao)
+        cidade.marcar_colheita_feita()
         return hectares
 
     def distribuir_alimentos(self, cidade, percentual):

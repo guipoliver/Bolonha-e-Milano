@@ -11,10 +11,13 @@ class Governo:
 
     def arrecadar_impostos(self, cidade):
         """base = servos * taxa / 100, vezes o fator da justica. Devolve o arrecadado."""
+        if cidade.is_impostos_arrecadados():
+            return -1
         base = cidade.get_servos() * cidade.get_taxa_imposto() // 100
         multiplicador = self._multiplicador_para(cidade.get_nivel_justica())
         arrecadado = int(base * multiplicador)
         cidade.adicionar_florins(arrecadado)
+        cidade.marcar_impostos_arrecadados()
         return arrecadado
 
     def definir_taxa_imposto(self, cidade, taxa):

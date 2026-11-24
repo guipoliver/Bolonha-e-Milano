@@ -4,6 +4,8 @@ from .construcoes import Construcoes
 from .governo import Governo
 from .jogador import Jogador
 from .mercado import Mercado
+from .nobreza import Nobreza
+from .partida import Partida
 
 
 class Menu:
@@ -11,12 +13,13 @@ class Menu:
 
     def __init__(self):
         self._em_execucao = True
-        self._jogador = None  # ainda nao existe jogo iniciado
+        self._partida = None  # ainda nao existe jogo iniciado
         self._cidade = None
         self._mercado = Mercado()
         self._agricultura = Agricultura()
         self._governo = Governo()
         self._construcoes = Construcoes()
+        self._nobreza = Nobreza()
 
     def executar(self):
         """Laco principal: repete exibir -> ler -> processar ate o jogador sair."""
@@ -39,7 +42,11 @@ class Menu:
         print("4 - Agricultura")
         print("5 - Governo")
         print("6 - Construcoes")
-        print("7 - Sobre o jogo")
+        if self._cidade is not None:
+            print(f"Ano {self._partida.get_ano_atual()} | Vez de {self._cidade.get_dono().get_nome()} ({self._cidade.get_nome()})")
+        print("7 - Encerrar turno")
+        print("8 - Ver classificacao")
+        print("9 - Sobre o jogo")
         print("0 - Sair")
 
     def _ler_opcao(self):
@@ -66,19 +73,33 @@ class Menu:
         elif opcao == 6:
             self._abrir_construcoes()
         elif opcao == 7:
+            self._encerrar_turno()
+        elif opcao == 8:
+            self._exibir_classificacao()
+        elif opcao == 9:
             self._exibir_sobre()
         elif opcao == 0:
             self._em_execucao = False
         else:
-            print("\nOpcao invalida! Digite 1, 2, 3, 4, 5, 6, 7 ou 0.")
+            print("\nOpcao invalida! Digite 1, 2, 3, 4, 5, 6, 7, 8, 9 ou 0.")
 
     def _iniciar_novo_jogo(self):
-        """Cria um Jogador e uma Cidade de verdade, perguntando os nomes."""
-        nome_jogador = input("Digite o nome do jogador: ").strip()
-        nome_cidade = input("Digite o nome da cidade: ").strip()
+        """Cadastra de 1 a 4 jogadores e inicia a partida pelo primeiro."""
+        quantidade = self._ler_quantidade("Quantos jogadores (1 a 4)? ")
+        if not 1 <= quantidade <= Partida.MAXIMO_JOGADORES:
+            quantidade = 2
+            print("Quantidade invalida. A partida tera 2 jogadores.")
 
-        self._jogador = Jogador(nome_jogador)
-        self._cidade = Cidade(nome_cidade, self._jogador)
+        partida = Partida()
+        nomes_cidades = ("Bolonha", "Milano", "Florença", "Veneza")
+        try:
+            for i in range(quantidade):
+                nome = input(f"Nome do jogador {i + 1}: ").strip()
+                partida.adicionar_cidade(Cidade(nomes_cidades[i], Jogador(nome)))
+        except EOFError:
+            return
+        self._partida = partida
+        self._cidade = partida.get_cidade_atual()
         self._cidade.exibir_status()
 
     def _exibir_status(self):
@@ -203,7 +224,9 @@ class Menu:
         """Delega a colheita para Agricultura e imprime o resultado."""
         graos_antes = self._cidade.get_graos()
         hectares = self._agricultura.processar_colheita(self._cidade)
-        if hectares == 0:
+        if hectares == -1:
+            print("\nA colheita deste ano ja foi feita.")
+        elif hectares == 0:
             print("\nNao foi possivel cultivar: faltam terras, servos ou graos para semear.")
         else:
             graos_depois = self._cidade.get_graos()
@@ -269,6 +292,9 @@ class Menu:
         """Delega a arrecadacao para Governo e imprime o resultado."""
         florins_antes = self._cidade.get_florins()
         arrecadado = self._governo.arrecadar_impostos(self._cidade)
+        if arrecadado == -1:
+            print("\nOs impostos deste ano ja foram arrecadados.")
+            return
         print(f"\nImpostos arrecadados: {arrecadado} florins.")
         print(f"Florins: {florins_antes} -> {self._cidade.get_florins()}")
 
@@ -344,8 +370,49 @@ class Menu:
             print("\nFlorins insuficientes para essa construcao.")
 
     # ------------------------------------------------------------------
+    # Rodadas e nobreza (Etapa 7)
+    # ------------------------------------------------------------------
+    def _encerrar_turno(self):
+        if self._partida is None:
+            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+            return
+        if self._partida.passar_turno():
+            print(f"\nFim do ano {self._partida.get_ano_atual()}!")
+            promovidas = self._partida.encerrar_ano(self._nobreza)
+            for cidade in promovidas:
+                dono = cidade.get_dono()
+                print(f"Promocao: {dono.get_nome()} agora e {dono.get_titulo()}!")
+            self._exibir_classificacao()
+            if self._partida.terminou():
+                self._encerrar_partida()
+                return
+        self._cidade = self._partida.get_cidade_atual()
+        print(f"\nAgora e a vez de {self._cidade.get_dono().get_nome()} ({self._cidade.get_nome()}).")
+
+    def _exibir_classificacao(self):
+        if self._partida is None:
+            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+            return
+        print("\n--- CLASSIFICACAO ---")
+        cidades = sorted(self._partida.get_cidades(), key=lambda cidade: (
+            cidade.get_dono().get_nivel_titulo(), self._nobreza.calcular_prestigio(cidade)), reverse=True)
+        for i, cidade in enumerate(cidades, 1):
+            dono = cidade.get_dono()
+            prestigio = self._nobreza.calcular_prestigio(cidade)
+            necessario = self._nobreza.prestigio_para_proximo_titulo(dono)
+            falta = "Titulo maximo" if necessario == -1 else f"Faltam {max(0, necessario - prestigio)} pontos para o proximo titulo"
+            print(f"{i}. {cidade.get_nome()} | {dono.get_nome()} | {dono.get_titulo()} | Prestigio: {prestigio} | {falta}")
+
+    def _encerrar_partida(self):
+        vencedor = self._partida.determinar_vencedor(self._nobreza)
+        print("\n--- FIM DA PARTIDA ---")
+        print(f"Vencedor: {vencedor.get_dono().get_nome()} ({vencedor.get_nome()}) - {vencedor.get_dono().get_titulo()}")
+        self._partida = None
+        self._cidade = None
+
+    # ------------------------------------------------------------------
     def _exibir_sobre(self):
-        """Imprime o texto que explica o jogo (so para a opcao 7)."""
+        """Imprime o texto que explica o jogo (so para a opcao 9)."""
         print()
         print("--- SOBRE O JOGO ---")
         print("Bolonha e Milano e um jogo de estrategia economica medieval.")

@@ -1,0 +1,21 @@
+@startuml
+left to right direction
+skinparam shadowing false
+skinparam usecase {
+  BackgroundColor #F7F8FC
+  BorderColor #232A60
+}
+actor Jogador
+rectangle "Bolonha e Milano" {
+  usecase "Acessar mercado" as B
+  usecase "Comprar graos" as O0
+  usecase "Vender graos" as O1
+  usecase "Comprar terras" as O2
+  usecase "Vender terras" as O3
+}
+Jogador --> B
+O0 .> B : <<extend>>
+O1 .> B : <<extend>>
+O2 .> B : <<extend>>
+O3 .> B : <<extend>>
+@enduml
