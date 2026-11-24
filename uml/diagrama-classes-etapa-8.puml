@@ -12,7 +12,7 @@ class Main {
   + main(): void
 }
 
-class Menu {
+class Menu #White;line:#E59B38 {
   - em_execucao: bool
   - partida: Partida
   - cidade: Cidade
@@ -23,6 +23,9 @@ class Menu {
   - nobreza: Nobreza
   + executar(): void
   - exibir_opcoes() / ler_opcao() / processar_opcao()
+  - ler_quantidade(mensagem): int
+  - ler_inteiro(mensagem, valor_eof): int
+  - exigir_jogo_em_andamento(): bool
   - iniciar_novo_jogo() / exibir_status()
   - abrir_mercado() + 4 operacoes (Etapa 3)
   - abrir_agricultura() + 2 operacoes (Etapa 4)
@@ -123,7 +126,7 @@ class Construcoes {
   + get_preco_construcao(): int
 }
 
-class Partida #White;line:#E59B38 {
+class Partida {
   + MAXIMO_JOGADORES: int
   - ANO_FINAL: int
   - cidades: list
@@ -139,7 +142,7 @@ class Partida #White;line:#E59B38 {
   + determinar_vencedor(nobreza): Cidade
 }
 
-class Nobreza #White;line:#E59B38 {
+class Nobreza {
   - PESO_CONSTRUCAO: int
   - PESO_SOLDADO: int
   - PESO_SERVO: int
@@ -148,6 +151,21 @@ class Nobreza #White;line:#E59B38 {
   + calcular_prestigio(cidade): int
   + prestigio_para_proximo_titulo(jogador): int
   + verificar_promocao(cidade): bool
+}
+
+class Testes #White;line:#E59B38 {
+  - aprovados: int
+  - reprovados: int
+  + main(): void
+  - verificar(descricao, condicao): void
+  - nova_cidade(): Cidade
+  - testar_cidade(): void
+  - testar_mercado(): void
+  - testar_agricultura(): void
+  - testar_governo(): void
+  - testar_construcoes(): void
+  - testar_jogador_e_nobreza(): void
+  - testar_partida(): void
 }
 
 Main ..> Menu : cria e executa
@@ -168,4 +186,12 @@ Agricultura ..> Cidade : usa
 Governo ..> Cidade : usa
 Construcoes ..> Cidade : usa
 
+Testes ..> Cidade : testa
+Testes ..> Mercado : testa
+Testes ..> Agricultura : testa
+Testes ..> Governo : testa
+Testes ..> Construcoes : testa
+Testes ..> Jogador : testa
+Testes ..> Nobreza : testa
+Testes ..> Partida : testa
 @enduml

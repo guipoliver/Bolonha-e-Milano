@@ -1,0 +1,43 @@
+@startuml
+skinparam shadowing false
+skinparam sequence {
+  ParticipantBackgroundColor #232A60
+  ParticipantFontColor White
+  LifeLineBorderColor #52627B
+  ArrowColor #232A60
+  GroupBorderColor #E59B38
+}
+title Bolonha e Milano | Etapa 8 - Fim do ano
+actor Jogador as J
+participant ":Menu" as M
+participant ":Partida" as P
+participant ":Cidade" as C
+participant ":Nobreza" as N
+participant "dono:Jogador" as D
+J -> M : opcao 7 (Encerrar turno)
+M -> P : passar_turno()
+P --> M : True (fim do ano)
+M -> P : encerrar_ano(nobreza)
+loop para cada cidade
+  P -> C : avancar_ano()
+  P -> N : verificar_promocao(cidade)
+  alt prestigio suficiente
+    N -> D : promover()
+    D --> N : True
+  end
+  N --> P : True / False
+end
+P --> M : lista de promovidas
+M -> M : exibir_classificacao()
+M -> P : terminou()
+P --> M : True / False
+alt partida terminou
+  M -> P : determinar_vencedor(nobreza)
+  P --> M : cidade vencedora
+  M --> J : FIM DA PARTIDA
+else partida continua
+  M -> P : get_cidade_atual()
+  P --> M : cidade da vez
+  M --> J : Agora e a vez de ...
+end
+@enduml

@@ -49,14 +49,25 @@ class Menu:
         print("9 - Sobre o jogo")
         print("0 - Sair")
 
-    def _ler_opcao(self):
+    def _ler_inteiro(self, mensagem, valor_eof=-1):
         """Le uma linha e converte para int. Entrada invalida devolve -1."""
         try:
-            return int(input("Escolha uma opcao: ").strip())
+            return int(input(mensagem).strip())
         except ValueError:
             return -1
-        except EOFError:  # Ctrl+D / fim da entrada: sai sem travar
-            return 0
+        except EOFError:
+            return valor_eof
+
+    def _ler_opcao(self):
+        """Le a opcao; fim da entrada equivale a sair ou voltar."""
+        return self._ler_inteiro("Escolha uma opcao: ", 0)
+
+    def _exigir_jogo_em_andamento(self):
+        """Devolve False e avisa se nao ha partida iniciada."""
+        if self._partida is None:
+            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+            return False
+        return True
 
     def _processar_opcao(self, opcao):
         """Decide a acao de acordo com a opcao lida."""
@@ -104,9 +115,7 @@ class Menu:
 
     def _exibir_status(self):
         """Mostra o status da cidade, ou avisa se nao ha jogo iniciado."""
-        if self._cidade is None:
-            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
-        else:
+        if self._exigir_jogo_em_andamento():
             self._cidade.exibir_status()
 
     # ------------------------------------------------------------------
@@ -114,8 +123,7 @@ class Menu:
     # ------------------------------------------------------------------
     def _abrir_mercado(self):
         """Submenu do mercado: laco que so termina com a opcao 0."""
-        if self._cidade is None:
-            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+        if not self._exigir_jogo_em_andamento():
             return
 
         no_mercado = True
@@ -149,10 +157,7 @@ class Menu:
 
     def _ler_quantidade(self, mensagem="Quantidade: "):
         """Le e valida um numero inteiro. Entrada invalida devolve -1."""
-        try:
-            return int(input(mensagem).strip())
-        except (ValueError, EOFError):
-            return -1
+        return self._ler_inteiro(mensagem)
 
     def _comprar_graos(self):
         quantidade = self._ler_quantidade()
@@ -195,8 +200,7 @@ class Menu:
     # ------------------------------------------------------------------
     def _abrir_agricultura(self):
         """Submenu da agricultura: laco que so termina com a opcao 0."""
-        if self._cidade is None:
-            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+        if not self._exigir_jogo_em_andamento():
             return
 
         na_agricultura = True
@@ -260,8 +264,7 @@ class Menu:
     # ------------------------------------------------------------------
     def _abrir_governo(self):
         """Submenu do governo: laco que so termina com a opcao 0."""
-        if self._cidade is None:
-            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+        if not self._exigir_jogo_em_andamento():
             return
 
         no_governo = True
@@ -321,8 +324,7 @@ class Menu:
     # ------------------------------------------------------------------
     def _abrir_construcoes(self):
         """Submenu de construcoes: laco que so termina com a opcao 0."""
-        if self._cidade is None:
-            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+        if not self._exigir_jogo_em_andamento():
             return
 
         na_construcoes = True
@@ -373,8 +375,7 @@ class Menu:
     # Rodadas e nobreza (Etapa 7)
     # ------------------------------------------------------------------
     def _encerrar_turno(self):
-        if self._partida is None:
-            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+        if not self._exigir_jogo_em_andamento():
             return
         if self._partida.passar_turno():
             print(f"\nFim do ano {self._partida.get_ano_atual()}!")
@@ -390,8 +391,7 @@ class Menu:
         print(f"\nAgora e a vez de {self._cidade.get_dono().get_nome()} ({self._cidade.get_nome()}).")
 
     def _exibir_classificacao(self):
-        if self._partida is None:
-            print("\nNenhum jogo iniciado. Escolha '1 - Novo jogo' primeiro.")
+        if not self._exigir_jogo_em_andamento():
             return
         print("\n--- CLASSIFICACAO ---")
         cidades = sorted(self._partida.get_cidades(), key=lambda cidade: (
